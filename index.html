@@ -16,14 +16,15 @@
     .container{
         font-family: sans-serif;
     }
-    #result{
-        padding-top: 2%;
-    }
     #num{
         width: 30%;
     }
-    button{
+    #btn{
         background-color: #44cc00;
+    }
+    #res{
+        font-size: 20px;
+        color: #44cc00;
     }
     body{
         background-color: #e6e6e6;
@@ -36,45 +37,54 @@
             <h2>BINARY TO DECIMAL CONVERTER</h2>
             <hr>
         </div>
-        <div class="form">
-                <p>Insert binary code, click on <i>convert</i>...</p>
-                <input type="number" id="num">
-                <button type="button" onClick="convert()">Convert</button>
-        </div>
         <div id="root"></div>
     </div>
 <script type="text/babel">
 
-    class App extends React.Component{
+    class B2DConverter extends React.Component {
 
-        render(){
-            return (
-            <div>
-            <div id="result">...and decimal number will be displayed here.
-            </div>
-            </div>
-            );
-        }
+    constructor(props) {
+        super(props);
+        this.state = {'result': null}
+        this.convert = this.convert.bind(this);
     }
 
-    function conversion(input){
-    let binary = parseInt(input, 2);
-    return binary;
+    convert(event) {
+        event.preventDefault();
+        const binary = document.getElementById('num').value;
+        let decimal = 0;
+        for(var i = binary.length - 1, j = 0; i >= 0; i--, j++){
+            const c = binary[i]
+            decimal += Number(c) * Math.pow(2, j);
+        }
+        this.setState({'result': decimal})
+    }
+
+    render() {
+        return (
+            <div>
+                <form onSubmit={this.convert}>
+                    <p>Insert number in binary code, click <i>Convert</i>...</p>
+                    <input type='text' id='num' required pattern="^[01]+$"/>
+                    <input type='submit' id="btn" value="Convert"/>
+                </form>
+                <br/>
+                <Result msg={this.state.result}/>
+            </div>
+        );
+    }
+
 }
 
-    function convert(){
-        var code = document.getElementById('num').value;
-        document.getElementById('result').innerHTML = "Decimal number is " + conversion(code);
+function Result(props) {
+    if(props.msg){
+        return <p id="res" >Decimal number is {props.msg}</p>;
+    } else {
+        return '...and decimal number will be shown here.';
     }
+}
 
-    ReactDOM.render(
-        <App />,
-        document.getElementById('root')
-        );
-
-
-
-
+ReactDOM.render(<B2DConverter />, document.getElementById('root'));
 </script>
 </body> 
 </html>
